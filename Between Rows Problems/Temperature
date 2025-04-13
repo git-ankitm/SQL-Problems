@@ -46,6 +46,7 @@ WHERE temperature > next_temp;
 The above solution assumes that the date_id column has a chronological order and represents a continuous range of dates. If the dates are not continuous, you'll need to handle gaps in the data 
 accordingly as mentioned in query below
 
+Approach 3: Using LAG() with null for More Robust Handling
 WITH temp_rows AS (
   SELECT date_id, temperature,
          LAG(temperature) OVER (ORDER BY date_id) AS prev_temp,
