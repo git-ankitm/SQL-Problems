@@ -58,5 +58,5 @@ FROM temp_rows
 WHERE (prev_temp IS NULL OR temperature > prev_temp)
   AND (next_temp IS NULL OR temperature >= next_temp);
 
-This query will correctly handle gaps in the data and return the date_id and temperature values  for all dates with higher temperatures compared to either the previous or the next day, 
-even when the dates are not continuous., as it able to handle gaps in the data.
+This query will correctly handle gaps in the data and return the date_id and temperature values for all dates with higher temperatures compared to either the previous or the next day, 
+even when the dates are not continuous, as it able to handle gaps in the data.
