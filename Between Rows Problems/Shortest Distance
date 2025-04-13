@@ -1,0 +1,35 @@
+Question: Write an SQL query to report the shortest distance between any two points from the Point table.
+
+Point table:
++----+
+| x  |
++----+
+| -1 |
+| 0  |
+| 2  |
++----+
+Output: 
++----------+
+| shortest |
++----------+
+| 1        |
++----------+
+
+Answer:
+WITH all_distances AS (
+  SELECT 
+    a.x AS x1, 
+    b.x AS x2, 
+    ABS(a.x - b.x) AS distance
+  FROM Point a
+  CROSS JOIN Point b
+  WHERE a.x != b.x
+)
+SELECT MIN(distance) AS shortest
+FROM all_distances;
+
+In this query, we first use a Common Table Expression (CTE) named "all_distances" to calculate the distance between all possible pairs of points in the Point 
+table. The CTE uses a cross join to generate all possible combinations of points, and the distance is calculated as the absolute difference between the 
+x-coordinates of each pair. If we didn't exclude such cases, the CTE would generate pairs of the form (x, x) for each x in the Point table, which would result
+in a distance of 0. The condition a.x != b.x ensures a point is not compared with itself. Finally, the outer query selects the minimum distance from all 
+valid pairs, giving the shortest distance between any two distinct points.
