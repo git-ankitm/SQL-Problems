@@ -1,5 +1,4 @@
-we want to find out the current balance of all users and check whether they have breached their credit limit (If their current credit is less than 0).
-
+We want to find out the current balance of all users and check whether they have breached their credit limit (If their current credit is less than 0).
 Write an SQL query to report.
 
 user_id,
