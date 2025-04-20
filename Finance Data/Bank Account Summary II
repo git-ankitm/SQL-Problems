@@ -49,29 +49,36 @@ Luis did not received any transfer, credit = $800
 
 
 Answer:
-with total_credit as 
-(
-select user_id,user_name,credit,amount from users u join transactions t
-on u.user_id=t.paid_to
-)  
+-- CTE for total credit (money received by users)
+WITH total_credit AS (
+  SELECT 
+    paid_to AS user_id, 
+    SUM(amount) AS credit_in
+  FROM transactions
+  GROUP BY paid_to
+),
 
-,total_debit as
-(
-select user_name,paid_by,-(amount) as neg_amount from users u join transactions t
-on u.user_id=t.paid_by
+-- CTE for total debit (money sent by users)
+total_debit AS (
+  SELECT 
+    paid_by AS user_id, 
+    SUM(amount) AS credit_out
+  FROM transactions
+  GROUP BY paid_by
 )
 
-,total as
-(
-select 
-t.user_id,
-t.user_name,
-(credit+amount+neg_amount) as credit
-from total_credit t join total_debit d 
-on lower(t.user_name)=lower(d.user_name)
-)
+-- Final SELECT
+SELECT 
+  u.user_id,
+  u.user_name,
+  u.credit + COALESCE(tc.credit_in, 0) - COALESCE(td.credit_out, 0) AS credit,
+  CASE 
+    WHEN u.credit + COALESCE(tc.credit_in, 0) - COALESCE(td.credit_out, 0) < 0 
+    THEN 'Yes' 
+    ELSE 'No' 
+  END AS credit_limit_breached
+FROM users u
+LEFT JOIN total_credit tc ON u.user_id = tc.user_id
+LEFT JOIN total_debit td ON u.user_id = td.user_id;
 
-select *,
-case when credit<0 then 'Yes' else 'No' end as credit_limit_breached 
-from total;
 
